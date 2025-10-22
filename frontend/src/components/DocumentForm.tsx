@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
-import { templatesApi, sendersApi } from '@/lib/api';
+import { sendersApi } from '@/lib/api';
 import type { Document, DocumentFormData } from '@/types';
 import { DOCUMENT_TYPES, LANGUAGES, TEMPLATES } from '@/types';
 
@@ -16,8 +15,6 @@ export function DocumentForm({ document, onSubmit, isLoading }: DocumentFormProp
     register,
     handleSubmit,
     watch,
-    setValue,
-    formState: { errors },
   } = useForm<DocumentFormData>({
     defaultValues: {
       docType: document?.docType || 'הצעת מחיר',
@@ -37,7 +34,6 @@ export function DocumentForm({ document, onSubmit, isLoading }: DocumentFormProp
   // Watch for changes
   const showPrice = watch('showPrice');
   const priceAmount = watch('priceAmount');
-  const language = watch('language');
 
   // Calculate VAT
   const priceWithVAT = priceAmount ? priceAmount * 1.18 : 0;
@@ -49,16 +45,6 @@ export function DocumentForm({ document, onSubmit, isLoading }: DocumentFormProp
   });
 
   const senders = sendersData?.data.senders || [];
-
-  // Auto-save on blur or after typing stops
-  useEffect(() => {
-    if (document) {
-      const subscription = watch(() => {
-        // Debounce auto-save would go here
-      });
-      return () => subscription.unsubscribe();
-    }
-  }, [watch, document]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

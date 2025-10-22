@@ -23,13 +23,13 @@ export function EditorPage() {
     enabled: !!id,
   });
 
-  const document = data?.data.document;
+  const currentDoc = data?.data.document;
 
   useEffect(() => {
-    if (document?.editedBody || document?.generatedBody) {
-      setEditedContent(document.editedBody || document.generatedBody || '');
+    if (currentDoc?.editedBody || currentDoc?.generatedBody) {
+      setEditedContent(currentDoc.editedBody || currentDoc.generatedBody || '');
     }
-  }, [document]);
+  }, [currentDoc]);
 
   // Create document mutation
   const createMutation = useMutation({
@@ -66,18 +66,18 @@ export function EditorPage() {
     mutationFn: documentsApi.exportPDF,
     onSuccess: (blob) => {
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${document?.docType}-${document?.clientName || 'document'}.pdf`;
-      document.body.appendChild(a);
-      a.click();
+      const linkElement = window.document.createElement('a');
+      linkElement.href = url;
+      linkElement.download = `${currentDoc?.docType}-${currentDoc?.clientName || 'document'}.pdf`;
+      window.document.body.appendChild(linkElement);
+      linkElement.click();
       window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      window.document.body.removeChild(linkElement);
     },
   });
 
   const handleFormSubmit = (formData: DocumentFormData) => {
-    if (id && document) {
+    if (id && currentDoc) {
       // Update existing document fields
       updateMutation.mutate({
         id,
@@ -133,16 +133,16 @@ export function EditorPage() {
                 <ArrowLeft size={20} />
                 <span>חזרה למסמכים</span>
               </button>
-              {document && (
+              {currentDoc && (
                 <div className="text-sm text-textSecondary">
-                  <span className="font-medium">{document.docType}</span>
-                  {document.clientName && <span> • {document.clientName}</span>}
+                  <span className="font-medium">{currentDoc.docType}</span>
+                  {currentDoc.clientName && <span> • {currentDoc.clientName}</span>}
                 </div>
               )}
             </div>
 
             <div className="flex items-center gap-2">
-              {id && document && (
+              {id && currentDoc && (
                 <>
                   <button
                     onClick={() => setIsEditMode(!isEditMode)}
@@ -161,7 +161,7 @@ export function EditorPage() {
                     )}
                   </button>
 
-                  {!document.generatedBody && (
+                  {!currentDoc.generatedBody && (
                     <button
                       onClick={handleGenerate}
                       disabled={generateMutation.isPending}
@@ -185,7 +185,7 @@ export function EditorPage() {
 
                   <button
                     onClick={handleExport}
-                    disabled={exportMutation.isPending || !document.editedBody}
+                    disabled={exportMutation.isPending || !currentDoc.editedBody}
                     className="btn-primary flex items-center gap-2 disabled:opacity-50"
                   >
                     <FileDown size={18} />
@@ -205,7 +205,7 @@ export function EditorPage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-textPrimary mb-6">פרטי המסמך</h2>
             <DocumentForm
-              document={document}
+              document={currentDoc}
               onSubmit={handleFormSubmit}
               isLoading={createMutation.isPending || updateMutation.isPending}
             />
@@ -217,28 +217,28 @@ export function EditorPage() {
               <h2 className="text-xl font-semibold text-textPrimary">
                 {isEditMode ? 'עריכת תוכן' : 'תצוגה מקדימה'}
               </h2>
-              {document?.language && (
+              {currentDoc?.language && (
                 <span className="text-sm text-textSecondary">
-                  {document.language === 'he' ? 'עברית' : 'English'}
+                  {currentDoc.language === 'he' ? 'עברית' : 'English'}
                 </span>
               )}
             </div>
 
-            {!document && (
+            {!currentDoc && (
               <div className="text-center text-textSecondary py-12">
                 <p>מלא את הפרטים בצד שמאל כדי להתחיל</p>
               </div>
             )}
 
-            {document && !isEditMode && (
-              <DocumentPreview content={editedContent} language={document.language} />
+            {currentDoc && !isEditMode && (
+              <DocumentPreview content={editedContent} language={currentDoc.language} />
             )}
 
-            {document && isEditMode && (
+            {currentDoc && isEditMode && (
               <RichTextEditor
                 content={editedContent}
                 onChange={setEditedContent}
-                language={document.language}
+                language={currentDoc.language}
               />
             )}
           </div>
