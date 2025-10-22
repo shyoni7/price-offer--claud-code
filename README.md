@@ -2,6 +2,16 @@
 
 מערכת פנימית ליצירת מסמכים מעוצבים של ORTAM AI בהתבסס על שדות טופס ופרומפט שפה טבעית, עם תצוגה מקדימה וייצוא ל-PDF.
 
+---
+
+## 🚀 פריסה לייצור (Production)
+
+**📖 [מדריך מהיר לפריסה ל-Vercel + Railway (בעברית)](./QUICKSTART_VERCEL_HE.md)**
+
+**📘 [מדריך מפורט לפריסה](./DEPLOY_VERCEL.md)**
+
+---
+
 ## 🎯 תכונות עיקריות
 
 - **יצירת מסמכים מקצועיים** - הצעות מחיר, הסכמים, בריפים ועוד
