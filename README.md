@@ -130,18 +130,35 @@ npm run prisma:migrate
 
 ### 6. יצירת משתמש ראשוני (אופציונלי)
 
-אחרי שהשרת רץ, תוכל ליצור משתמש ראשוני דרך API:
+יש שתי דרכים ליצור משתמש מנהל ראשון:
 
-```bash
-curl -X POST http://localhost:3001/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@ortam.ai",
-    "password": "your-password",
-    "name": "Admin User",
-    "role": "ADMIN"
-  }'
-```
+1. **קריאת API ידנית (לסביבות פיתוח/בדיקות):**
+
+    ```bash
+    curl -X POST http://localhost:3001/api/auth/register \
+      -H "Content-Type: application/json" \
+      -d '{
+        "email": "admin@ortam.ai",
+        "password": "your-password",
+        "name": "Admin User",
+        "role": "ADMIN"
+      }'
+    ```
+
+2. **הזרקת משתמש אוטומטית ע"י משתני סביבה (מומלץ לפרודקשן):**
+
+    השרת יבדוק בכל אתחול אם הוגדרו המשתנים `SEED_ADMIN_EMAIL` ו-`SEED_ADMIN_PASSWORD`. אם לא קיים משתמש עם אותו מייל, יווצר משתמש מנהל חדש אוטומטית.
+
+    בריילווי (או בכל סביבת הפעלה אחרת) יש להוסיף את המשתנים הבאים:
+
+    ```env
+    SEED_ADMIN_EMAIL=yonibmyguest@gmail.com
+    SEED_ADMIN_PASSWORD=311276
+    SEED_ADMIN_NAME=Yoni Guest
+    SEED_ADMIN_ROLE=ADMIN
+    ```
+
+    לאחר שמירה ואתחול/דיפלוימנט מחדש של השרת, המשתמש יווצר פעם אחת. אם המשתמש כבר קיים, הלוג יראה שהפעולה דולגה.
 
 ### 7. הרצת הפרויקט
 
@@ -316,15 +333,19 @@ npm run prisma:studio
 
 ### Backend
 
-1. הגדר משתני סביבה בסביבת הייצור
+1. הגדר משתני סביבה בסביבת הייצור (לדוגמה Railway)
+   - `DATABASE_URL` עם פרטי מסד הנתונים
+   - `JWT_SECRET` ו-`JWT_EXPIRES_IN`
+   - `FRONTEND_URL` עם כתובת הדומיין של ה-Frontend (ניתן לציין כמה דומיינים באמצעות פסיק, למשל `https://app.vercel.app,https://app-git-main.vercel.app`)
 2. הרץ migrations: `npm run prisma:migrate`
 3. Build: `npm run build`
 4. Start: `npm start`
 
 ### Frontend
 
-1. Build: `npm run build`
-2. העתק את תיקיית `dist/` לשרת סטטי
+1. אם מפריסים ל-Vercel, הגדר משתנה סביבה `VITE_API_BASE_URL` שיצביע על כתובת ה-Backend בריילוויי כולל הסיומת `/api` (לדוגמה `https://ortam-docs-backend-production.up.railway.app/api`).
+2. Build: `npm run build`
+3. העתק את תיקיית `dist/` לשרת סטטי
 
 ### רומנדציות Deploy
 - Backend: Railway, Render, DigitalOcean, AWS
