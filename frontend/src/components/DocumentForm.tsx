@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
-import { templatesApi, sendersApi } from '@/lib/api';
+import { sendersApi } from '@/lib/api';
 import type { Document, DocumentFormData } from '@/types';
 import { DOCUMENT_TYPES, LANGUAGES, TEMPLATES } from '@/types';
 
@@ -12,13 +12,7 @@ interface DocumentFormProps {
 }
 
 export function DocumentForm({ document, onSubmit, isLoading }: DocumentFormProps) {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<DocumentFormData>({
+  const { register, handleSubmit, watch } = useForm<DocumentFormData>({
     defaultValues: {
       docType: document?.docType || 'הצעת מחיר',
       language: document?.language || 'he',
@@ -37,8 +31,6 @@ export function DocumentForm({ document, onSubmit, isLoading }: DocumentFormProp
   // Watch for changes
   const showPrice = watch('showPrice');
   const priceAmount = watch('priceAmount');
-  const language = watch('language');
-
   // Calculate VAT
   const priceWithVAT = priceAmount ? priceAmount * 1.18 : 0;
 
