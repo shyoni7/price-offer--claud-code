@@ -1,0 +1,130 @@
+// ORTAM Docs Builder - Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(EDITOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents Document[]
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+// Document model
+model Document {
+  id            String         @id @default(uuid())
+  docType       String
+  language      String         @default("he")
+  templateId    String         @default("A")
+
+  // Client information
+  clientName            String?
+  clientContactPerson   String?
+  clientContactPhone    String?
+  subject               String?
+
+  // Pricing
+  priceAmount           Float?
+  priceCurrency         String         @default("ILS")
+  vatPercent            Float          @default(18)
+  showPrice             Boolean        @default(true)
+
+  // Content
+  userPrompt            String?        @db.Text
+  generatedBody         String?        @db.Text
+  editedBody            String?        @db.Text
+
+  // Metadata
+  status                DocumentStatus @default(DRAFT)
+  sender                String?
+
+  // Relations
+  createdBy             String
+  user                  User           @relation(fields: [createdBy], references: [id])
+
+  // Timestamps
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  // Versions
+  versions              DocumentVersion[]
+
+  @@map("documents")
+  @@index([createdBy])
+  @@index([docType])
+  @@index([status])
+}
+
+enum DocumentStatus {
+  DRAFT
+  LOCKED
+  EXPORTED
+}
+
+// Document version history
+model DocumentVersion {
+  id            String   @id @default(uuid())
+  documentId    String
+  document      Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  versionNumber Int
+  content       String   @db.Text
+  snapshot      Json     // Full document snapshot
+
+  createdAt     DateTime @default(now())
+
+  @@map("document_versions")
+  @@index([documentId])
+  @@unique([documentId, versionNumber])
+}
+
+// Template model
+model Template {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  code        String   @unique // A, B, C
+  headerHtml  String?  @db.Text
+  footerHtml  String?  @db.Text
+  styles      Json?
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("templates")
+}
+
+// Sender information (for "מי שולח את המסמך")
+model Sender {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  title       String?
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("senders")
+}
