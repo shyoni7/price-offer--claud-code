@@ -1,7 +1,12 @@
 import axios from 'axios';
 import type { Document, DocumentFormData, User, Template, Sender } from '@/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const fallbackBaseUrl = import.meta.env.DEV
+  ? '/api'
+  : 'https://ortam-docs-backend-production.up.railway.app/api';
+
+const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL || fallbackBaseUrl).trim();
+const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
