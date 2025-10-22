@@ -63,7 +63,12 @@ authRouter.post('/login', async (req, res, next) => {
     }
 
     if (process.env.SEED_ADMIN_EMAIL && process.env.SEED_ADMIN_PASSWORD) {
-      await seedAdminUser({ silentOnSkip: true });
+      try {
+        await seedAdminUser({ silentOnSkip: true });
+      } catch (seedError) {
+        console.error('⚠️  Failed to run admin seeder before login');
+        console.error(seedError);
+      }
     }
 
     const user = await prisma.user.findUnique({

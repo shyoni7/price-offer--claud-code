@@ -51,7 +51,12 @@ app.use(errorHandler);
 
 async function start() {
   try {
-    await seedAdminUser();
+    try {
+      await seedAdminUser();
+    } catch (seedError) {
+      console.error('⚠️  Failed to seed admin user during startup');
+      console.error(seedError);
+    }
 
     app.listen(PORT, () => {
       console.log(`🚀 ORTAM Docs Builder API running on port ${PORT}`);
