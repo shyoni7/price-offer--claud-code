@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-textPrimary;
+  }
+
+  [dir="rtl"] {
+    font-family: 'Heebo', sans-serif;
+  }
+
+  [dir="ltr"] {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors font-medium;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-textPrimary px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors font-medium;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-textPrimary mb-2;
+  }
+}
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  @apply min-h-[400px] p-4 focus:outline-none;
+}
+
+.ProseMirror h1 {
+  @apply text-3xl font-bold mb-4 text-primary;
+}
+
+.ProseMirror h2 {
+  @apply text-2xl font-semibold mb-3 text-primary;
+}
+
+.ProseMirror h3 {
+  @apply text-xl font-medium mb-2 text-textPrimary;
+}
+
+.ProseMirror p {
+  @apply mb-4;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  @apply mb-4 pr-6;
+}
+
+.ProseMirror li {
+  @apply mb-2;
+}
+
+.ProseMirror table {
+  @apply w-full border-collapse mb-4;
+}
+
+.ProseMirror th,
+.ProseMirror td {
+  @apply border border-gray-300 px-4 py-2;
+}
+
+.ProseMirror th {
+  @apply bg-gray-100 font-semibold;
+}
+
+.ProseMirror strong {
+  @apply font-semibold text-primary;
+}
+
+.ProseMirror a {
+  @apply text-primary underline;
+}
