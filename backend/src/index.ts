@@ -7,6 +7,7 @@ import { documentsRouter } from './routes/documents';
 import { templatesRouter } from './routes/templates';
 import { sendersRouter } from './routes/senders';
 import { errorHandler } from './middleware/errorHandler';
+import { seedAdminUser } from './services/adminSeeder';
 
 dotenv.config();
 
@@ -48,7 +49,18 @@ app.use('/api/senders', sendersRouter);
 // Error handling
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`🚀 ORTAM Docs Builder API running on port ${PORT}`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+async function start() {
+  try {
+    await seedAdminUser();
+
+    app.listen(PORT, () => {
+      console.log(`🚀 ORTAM Docs Builder API running on port ${PORT}`);
+      console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server', error);
+    process.exit(1);
+  }
+}
+
+void start();
