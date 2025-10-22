@@ -171,12 +171,12 @@ documentsRouter.post('/:id/generate', async (req: AuthRequest, res, next) => {
     const generatedContent = await generateDocumentContent({
       docType: document.docType,
       language: document.language,
-      clientName: document.clientName,
-      clientContactPerson: document.clientContactPerson,
-      subject: document.subject,
-      priceAmount: document.priceAmount,
+      clientName: document.clientName ?? undefined,
+      clientContactPerson: document.clientContactPerson ?? undefined,
+      subject: document.subject ?? undefined,
+      priceAmount: document.priceAmount ?? undefined,
       showPrice: document.showPrice,
-      userPrompt: document.userPrompt
+      userPrompt: document.userPrompt ?? undefined
     });
 
     // Update document with generated content
