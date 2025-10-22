@@ -5,6 +5,7 @@ import type { SignOptions, Secret } from 'jsonwebtoken';
 import { prisma } from '../db';
 import { AppError } from '../middleware/errorHandler';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { seedAdminUser } from '../services/adminSeeder';
 
 export const authRouter = Router();
 
@@ -59,6 +60,10 @@ authRouter.post('/login', async (req, res, next) => {
 
     if (!email || !password) {
       throw new AppError('Email and password required', 400);
+    }
+
+    if (process.env.SEED_ADMIN_EMAIL && process.env.SEED_ADMIN_PASSWORD) {
+      await seedAdminUser({ silentOnSkip: true });
     }
 
     const user = await prisma.user.findUnique({
