@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import type { SignOptions, Secret } from 'jsonwebtoken';
 import { prisma } from '../db';
 import { AppError } from '../middleware/errorHandler';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { seedAdminUser } from '../services/adminSeeder';
 
 export const authRouter = Router();
 
@@ -60,6 +62,15 @@ authRouter.post('/login', async (req, res, next) => {
       throw new AppError('Email and password required', 400);
     }
 
+    if (process.env.SEED_ADMIN_EMAIL && process.env.SEED_ADMIN_PASSWORD) {
+      try {
+        await seedAdminUser({ silentOnSkip: true });
+      } catch (seedError) {
+        console.error('⚠️  Failed to run admin seeder before login');
+        console.error(seedError);
+      }
+    }
+
     const user = await prisma.user.findUnique({
       where: { email }
     });
@@ -74,8 +85,11 @@ authRouter.post('/login', async (req, res, next) => {
       throw new AppError('Invalid credentials', 401);
     }
 
-    const secret = process.env.JWT_SECRET || 'fallback-secret';
-    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
+    const secret: Secret = process.env.JWT_SECRET || 'fallback-secret';
+    const expiresIn =
+      (process.env.JWT_EXPIRES_IN as SignOptions['expiresIn']) ||
+      ('7d' as SignOptions['expiresIn']);
+    const signOptions: SignOptions = { expiresIn };
 
     const token = jwt.sign(
       {
@@ -84,7 +98,7 @@ authRouter.post('/login', async (req, res, next) => {
         role: user.role
       },
       secret,
-      { expiresIn }
+      signOptions
     );
 
     res.json({
