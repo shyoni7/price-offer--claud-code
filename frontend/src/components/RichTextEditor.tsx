@@ -9,7 +9,6 @@ import TableHeader from '@tiptap/extension-table-header';
 import {
   Bold,
   Italic,
-  Underline as UnderlineIcon,
   List,
   ListOrdered,
   Heading1,

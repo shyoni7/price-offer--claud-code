@@ -316,15 +316,19 @@ npm run prisma:studio
 
 ### Backend
 
-1. הגדר משתני סביבה בסביבת הייצור
+1. הגדר משתני סביבה בסביבת הייצור (לדוגמה Railway)
+   - `DATABASE_URL` עם פרטי מסד הנתונים
+   - `JWT_SECRET` ו-`JWT_EXPIRES_IN`
+   - `FRONTEND_URL` עם כתובת הדומיין של ה-Frontend (ניתן לציין כמה דומיינים באמצעות פסיק, למשל `https://app.vercel.app,https://app-git-main.vercel.app`)
 2. הרץ migrations: `npm run prisma:migrate`
 3. Build: `npm run build`
 4. Start: `npm start`
 
 ### Frontend
 
-1. Build: `npm run build`
-2. העתק את תיקיית `dist/` לשרת סטטי
+1. אם מפריסים ל-Vercel, הגדר משתנה סביבה `VITE_API_BASE_URL` שיצביע על כתובת ה-Backend בריילוויי כולל הסיומת `/api` (לדוגמה `https://ortam-docs-backend-production.up.railway.app/api`).
+2. Build: `npm run build`
+3. העתק את תיקיית `dist/` לשרת סטטי
 
 ### רומנדציות Deploy
 - Backend: Railway, Render, DigitalOcean, AWS
